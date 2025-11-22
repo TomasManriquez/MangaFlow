@@ -13,6 +13,7 @@ build/
 .env
 .env.local
 .env.*.local
+.env.production
 
 # OS files
 .DS_Store
@@ -34,3 +35,9 @@ downloads/
 # Logs
 logs/
 *.log
+
+# Docker
+nginx/ssl/*.pem
+nginx/ssl/*.key
+nginx/ssl/*.crt
+docker-compose.override.yml

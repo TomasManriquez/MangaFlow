@@ -42,6 +42,27 @@ manga-reader/
 - PostgreSQL database
 - Bash terminal (Git Bash on Windows)
 
+### 🐳 Docker Deployment (Recommended)
+
+The easiest way to run MangaFlow is using Docker:
+
+```bash
+# Copy environment template
+copy .env.production.example .env.production
+
+# Edit .env.production and set DB_PASSWORD
+
+# Build and start all services
+docker-compose up -d
+
+# Initialize database
+docker-compose exec backend npx prisma migrate deploy
+```
+
+Access at `http://localhost`
+
+📖 **See [DEPLOYMENT.md](DEPLOYMENT.md) for complete Docker deployment guide**
+
 ### Backend Setup
 
 ```bash
