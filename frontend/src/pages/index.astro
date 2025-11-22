@@ -1,0 +1,254 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MangaCard from '../components/MangaCard.astro';
+
+// Mock data for demonstration - will be replaced with API calls
+const featuredMangas = [
+  {
+    id: '1',
+    title: 'One Piece',
+    cover: 'https://images.unsplash.com/photo-1612178991541-b48cc8e92a4d?w=400&h=600&fit=crop',
+    chapters: 1095
+  },
+  {
+    id: '2',
+    title: 'Naruto',
+    cover: 'https://images.unsplash.com/photo-1618519764620-7403abdbdfe9?w=400&h=600&fit=crop',
+    chapters: 700
+  },
+  {
+    id: '3',
+    title: 'Attack on Titan',
+    cover: 'https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?w=400&h=600&fit=crop',
+    chapters: 139
+  },
+  {
+    id: '4',
+    title: 'My Hero Academia',
+    cover: 'https://images.unsplash.com/photo-1601645191163-3fc0d5d64e35?w=400&h=600&fit=crop',
+    chapters: 405
+  }
+];
+---
+
+<BaseLayout title="Inicio">
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content fade-in">
+        <h1 class="hero-title">
+          Lee tus <span class="gradient-text">mangas favoritos</span>
+          <br />donde sea, cuando sea
+        </h1>
+        <p class="hero-description">
+          Accede a miles de mangas desde múltiples fuentes. Descarga para lectura offline.
+          Experiencia de lectura moderna y fluida.
+        </p>
+        <div class="hero-actions">
+          <a href="/search" class="btn btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            Buscar Manga
+          </a>
+          <a href="/library" class="btn btn-secondary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            Mi Biblioteca
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Mangas -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Destacados</h2>
+        <a href="/browse" class="btn btn-ghost">Ver todos →</a>
+      </div>
+      
+      <div class="grid grid-manga">
+        {featuredMangas.map(manga => (
+          <MangaCard {...manga} />
+        ))}
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+      <h2 class="features-title">¿Por qué MangaFlow?</h2>
+      
+      <div class="features-grid">
+        <div class="feature-card glass-effect">
+          <div class="feature-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            </svg>
+          </div>
+          <h3>Múltiples Fuentes</h3>
+          <p>Accede a mangas desde MangaDex, ZonaT.mo y Manga Plus en un solo lugar.</p>
+        </div>
+
+        <div class="feature-card glass-effect">
+          <div class="feature-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+            </svg>
+          </div>
+          <h3>Lectura Offline</h3>
+          <p>Descarga tus capítulos favoritos y léelos sin conexión a internet.</p>
+        </div>
+
+        <div class="feature-card glass-effect">
+          <div class="feature-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <h3>Diseño Moderno</h3>
+          <p>Interfaz minimalista y elegante que se adapta a todos tus dispositivos.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: var(--space-12) 0;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(
+      circle,
+      var(--primary-orange-glow) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-title {
+    margin-bottom: var(--space-5);
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin: 0 auto var(--space-6);
+    max-width: 600px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .section {
+    padding: var(--space-8) 0;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-6);
+  }
+
+  .section-header h2 {
+    margin: 0;
+  }
+
+  .features {
+    padding: var(--space-12) 0;
+    text-align: center;
+  }
+
+  .features-title {
+    margin-bottom: var(--space-8);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .feature-card {
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-base);
+  }
+
+  .feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+  }
+
+  .feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(
+      135deg,
+      var(--primary-orange),
+      var(--primary-orange-dark)
+    );
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-4);
+    color: white;
+    box-shadow: var(--shadow-glow);
+  }
+
+  .feature-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-3);
+  }
+
+  .feature-card p {
+    margin: 0 auto;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: var(--space-8) 0;
+    }
+
+    .hero-title {
+      font-size: 2rem;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,159 @@
+// Prisma Schema - Database Models
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Manga Model - Main entity
+model Manga {
+  id          String    @id @default(cuid())
+  title       String
+  altTitles   String[]
+  description String?
+  coverImage  String?
+  authors     String[]
+  artists     String[]
+  genres      String[]
+  status      String?   // ongoing, completed, hiatus
+  year        Int?
+  
+  // Multi-source support
+  sources     MangaSource[]
+  
+  // Relations
+  chapters    Chapter[]
+  
+  // Metadata for AI integration
+  tags        String[]
+  rating      Float?
+  popularity  Int?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([title])
+  @@index([status])
+}
+
+// Manga Source - Track manga across different platforms
+model MangaSource {
+  id         String   @id @default(cuid())
+  mangaId    String
+  manga      Manga    @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+  
+  source     String   // "mangadex", "zonatmo", "mangaplus"
+  sourceId   String   // ID on the external platform
+  sourceUrl  String
+  
+  lastSynced DateTime @default(now())
+  
+  @@unique([source, sourceId])
+  @@index([mangaId])
+}
+
+// Chapter Model
+model Chapter {
+  id              String   @id @default(cuid())
+  mangaId         String
+  manga           Manga    @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+  
+  chapterNumber   Float
+  title           String?
+  volume          String?
+  language        String   @default("es")
+  
+  // Source information
+  source          String
+  sourceChapterId String
+  sourceUrl       String
+  
+  // Reading data
+  pages           Page[]
+  pageCount       Int      @default(0)
+  
+  // Offline storage
+  isDownloaded    Boolean  @default(false)
+  downloadPath    String?
+  
+  publishedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([mangaId, chapterNumber, source])
+  @@index([mangaId])
+  @@index([source])
+}
+
+// Page Model - Individual manga pages
+model Page {
+  id          String   @id @default(cuid())
+  chapterId   String
+  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  
+  pageNumber  Int
+  imageUrl    String
+  localPath   String?  // Path when downloaded for offline
+  
+  width       Int?
+  height      Int?
+  
+  createdAt   DateTime @default(now())
+  
+  @@unique([chapterId, pageNumber])
+  @@index([chapterId])
+}
+
+// User Model - For future features and AI personalization
+model User {
+  id          String   @id @default(cuid())
+  username    String   @unique
+  email       String?  @unique
+  
+  // User preferences
+  preferences Json     @default("{}")
+  
+  // Relations
+  progress    ReadingProgress[]
+  favorites   Favorite[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Reading Progress - Track user reading history
+model ReadingProgress {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  mangaId    String
+  chapterId  String
+  
+  currentPage Int     @default(0)
+  completed   Boolean @default(false)
+  
+  lastReadAt  DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  
+  @@unique([userId, chapterId])
+  @@index([userId])
+  @@index([mangaId])
+}
+
+// Favorites - User's favorite mangas
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  mangaId   String
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, mangaId])
+  @@index([userId])
+}

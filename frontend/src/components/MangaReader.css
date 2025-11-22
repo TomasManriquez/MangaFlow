@@ -1,0 +1,204 @@
+/* Manga Reader Styles */
+
+.manga-reader {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.reader-controls {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4);
+    background: rgba(17, 18, 23, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    gap: var(--space-4);
+}
+
+.controls-left,
+.controls-right {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.controls-center {
+    flex: 1;
+    text-align: center;
+}
+
+.page-counter {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+.control-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.control-btn:hover:not(:disabled) {
+    background: var(--neutral-600);
+    border-color: var(--primary-orange);
+    transform: translateY(-1px);
+}
+
+.control-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.control-btn.btn-primary {
+    background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-dark));
+    border-color: transparent;
+    color: white;
+    box-shadow: var(--shadow-glow);
+}
+
+.control-btn.btn-primary:hover:not(:disabled) {
+    box-shadow: var(--shadow-glow-strong);
+    transform: translateY(-2px);
+}
+
+.reader-page {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    cursor: pointer;
+    user-select: none;
+}
+
+.page-image {
+    max-width: 100%;
+    max-height: 85vh;
+    height: auto;
+    object-fit: contain;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-md);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.reader-progress {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--neutral-800);
+    z-index: 100;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-orange), var(--primary-orange-light));
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px var(--primary-orange-glow);
+}
+
+.keyboard-hints {
+    position: fixed;
+    bottom: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-2) var(--space-4);
+    background: rgba(17, 18, 23, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    pointer-events: none;
+}
+
+.manga-reader:hover .keyboard-hints {
+    opacity: 1;
+}
+
+.reader-loading,
+.reader-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: var(--space-4);
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--neutral-700);
+    border-top-color: var(--primary-orange);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.reader-error p {
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+}
+
+/* Fullscreen styles */
+.manga-reader:fullscreen {
+    background: black;
+}
+
+.manga-reader:fullscreen .page-image {
+    max-height: 95vh;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .reader-controls {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .controls-left,
+    .controls-right {
+        flex: 1;
+    }
+
+    .controls-center {
+        width: 100%;
+        order: -1;
+    }
+
+    .keyboard-hints {
+        display: none;
+    }
+
+    .page-image {
+        max-height: 80vh;
+    }
+}
