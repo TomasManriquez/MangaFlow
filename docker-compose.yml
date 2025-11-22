@@ -1,53 +1,40 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
-  db:
-    image: postgres:15-alpine
-    container_name: mangaflow-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${DB_USER:-mangaflow}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme123}
-      POSTGRES_DB: ${DB_NAME:-manga_reader}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - backend-network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-mangaflow}" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Backend API
+  # Backend API (connects to Supabase PostgreSQL)
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: mangaflow-backend
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://${DB_USER:-mangaflow}:${DB_PASSWORD:-changeme123}@db:5432/${DB_NAME:-manga_reader}?schema=public
+      # Supabase Configuration
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      SUPABASE_STORAGE_BUCKET: ${SUPABASE_STORAGE_BUCKET:-manga-pages}
+
+      # Database URL (Supabase PostgreSQL)
+      DATABASE_URL: ${DATABASE_URL}
+
+      # Application
       PORT: 3000
       NODE_ENV: ${NODE_ENV:-production}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
-      MANGA_STORAGE_PATH: /app/storage/manga
+
+      # Rate Limiting
       RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
       RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-100}
+
+      # Scraper Settings
       SCRAPER_USER_AGENT: ${SCRAPER_USER_AGENT:-MangaFlow/1.0}
       SCRAPER_DELAY_MS: ${SCRAPER_DELAY_MS:-1000}
-    volumes:
-      - manga_storage:/app/storage/manga
     networks:
-      - backend-network
-      - frontend-network
+      - app-network
     command: sh -c "npx prisma migrate deploy && node dist/server.js"
 
-  # Frontend
+  # Frontend (Astro + nginx)
   frontend:
     build:
       context: ./frontend
@@ -55,7 +42,7 @@ services:
     container_name: mangaflow-frontend
     restart: unless-stopped
     networks:
-      - frontend-network
+      - app-network
 
   # Nginx Reverse Proxy
   nginx:
@@ -75,7 +62,7 @@ services:
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - nginx_cache:/var/cache/nginx
     networks:
-      - frontend-network
+      - app-network
     environment:
       - BACKEND_HOST=backend
       - BACKEND_PORT=3000
@@ -83,15 +70,9 @@ services:
       - FRONTEND_PORT=8080
 
 networks:
-  backend-network:
-    driver: bridge
-  frontend-network:
+  app-network:
     driver: bridge
 
 volumes:
-  postgres_data:
-    driver: local
-  manga_storage:
-    driver: local
   nginx_cache:
     driver: local

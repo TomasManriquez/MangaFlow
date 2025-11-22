@@ -7,7 +7,7 @@ interface Props {
   chapters?: number;
 }
 
-const { id, title, cover, description, chapters } = Astro.props;
+const { id, title, cover, chapters } = Astro.props;
 ---
 
 <a href={`/manga/${id}`} class="manga-card">

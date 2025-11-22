@@ -161,12 +161,14 @@ export default function MangaReader({ chapterId, initialPage = 1 }: MangaReaderP
 
             {/* Page Display */}
             <div className="reader-page" onClick={nextPage}>
-                <img
-                    src={currentPageData.imageUrl}
-                    alt={`Page ${currentPage}`}
-                    className="page-image"
-                    loading="lazy"
-                />
+                {currentPageData && (
+                    <img
+                        src={currentPageData.imageUrl}
+                        alt={`Page ${currentPage}`}
+                        className="page-image"
+                        loading="lazy"
+                    />
+                )}
             </div>
 
             {/* Progress Bar */}
